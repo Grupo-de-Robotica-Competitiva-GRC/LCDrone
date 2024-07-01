@@ -1,4 +1,4 @@
-# Projeto STM32F103C8T6
+# Projeto drone STM32F103C8T6
 
 Este é um projeto básico para demonstrar o uso do microcontrolador STM32F103C8T6.
 
@@ -28,20 +28,15 @@ O projeto utiliza o STM32CubeMX para configurar os pinos GPIO e gerar o código 
 
 Contribuições são bem-vindas via pull requests. Para mudanças importantes, por favor, abra uma issue primeiro para discutir o que você gostaria de mudar.
 
-## Autor
-
-[Seu Nome]
 
 ## Licença
 
-Este projeto está licenciado sob a [Licença XYZ]. Veja o arquivo LICENSE para mais detalhes.
+Este projeto está licenciado sob a [Licença MIT]. Veja o arquivo LICENSE para mais detalhes.
 
 ---
 
-### Exemplo da Configuração no STM32CubeMX (IOC):
+### Configuração inicial do drone em STM32CubeMX (IOC):
 
-![Configuração no STM32CubeMX](ioc_configuration.png)
+![Configuração no STM32CubeMX](STM32_config_ioc.jfif)
 
 ---
-
-Esse README fornece uma visão geral básica do projeto, incluindo instruções para configuração no STM32CubeMX e orientações para compilação e execução. Certifique-se de adaptar os detalhes específicos conforme necessário para o seu projeto.
