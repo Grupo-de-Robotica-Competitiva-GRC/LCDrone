@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "NRF24L01.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,16 +40,19 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc;
+DMA_HandleTypeDef hdma_adc;
 
 SPI_HandleTypeDef hspi1;
 
 /* USER CODE BEGIN PV */
+uint32_t h[4];
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC_Init(void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
@@ -58,6 +61,15 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint8_t TxAddress[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
+uint8_t frente[] = "frente";
+uint8_t tras[] = "tras";
+uint8_t direita[] = "direita";
+uint8_t esquerda[] = "esquerda";
+uint8_t cima[] = "cima";
+uint8_t baixo[] = "baixo";
+uint8_t giroesq[] = "giroesq";
+uint8_t girodir[] = "girodir";
 
 /* USER CODE END 0 */
 
@@ -89,10 +101,14 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  NRF24_Init();
 
+  NRF24_TxMode(TxAddress, 10);
+  HAL_ADC_Start_DMA(&hadc, h, 4);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,7 +118,60 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+
+	  if(h[2] >= 3000){
+		  	  if(NRF24_Transmit(frente) == 1){
+		  			  HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_1);
+		  			  HAL_Delay(1000);
+		  }
+	  }
+	  if(h[2] <= 1000){
+	  		  if(NRF24_Transmit(tras) == 1){
+	  		  			  HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_1);
+	  		  			  HAL_Delay(500);
+	  		  }
+	  	  }
+	  if(h[3] >= 3000){
+	  		  if(NRF24_Transmit(direita) == 1){
+	  			  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1, GPIO_PIN_SET);
+	  			  HAL_Delay(500);
+	  	 }
+	  }
+	  if(h[3] <= 1000){
+	  		 if(NRF24_Transmit(esquerda) == 1){
+	  			 HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1, GPIO_PIN_RESET);
+	  			 HAL_Delay(500);
+	  	 }
+	  	  }
+
+
+
+  /*if(h[0] >= 3000){
+  		  	  if(NRF24_Transmit(frente) == 1){
+  		  			  HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_1);
+  		  			  HAL_Delay(1000);
+  		  }
+  	  }*/
+
+  if(h[0] <= 1000){
+  	  		  if(NRF24_Transmit(tras) == 1){
+  	  		  			  HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_1);
+  	  		  			  HAL_Delay(500);
+  	  		  }
+  	  	  }
+  if(h[1] >= 3000){
+  	  		  if(NRF24_Transmit(girodir) == 1){
+  	  			  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1, GPIO_PIN_SET);
+  	  			  HAL_Delay(500);
+  	  	 }
+  	  }
+  if(h[1] <= 1000){
+  	  		 if(NRF24_Transmit(giroesq) == 1){
+  	  			 HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1, GPIO_PIN_RESET);
+  	  			 HAL_Delay(500);
+  	  	 }
+  	  	  }
+    }
   /* USER CODE END 3 */
 }
 
@@ -118,12 +187,14 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSI14;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI14|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.HSI14CalibrationValue = 16;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL3;
+  RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -133,11 +204,11 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -171,11 +242,11 @@ static void MX_ADC_Init(void)
   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc.Init.LowPowerAutoWait = DISABLE;
   hadc.Init.LowPowerAutoPowerOff = DISABLE;
-  hadc.Init.ContinuousConvMode = DISABLE;
+  hadc.Init.ContinuousConvMode = ENABLE;
   hadc.Init.DiscontinuousConvMode = DISABLE;
   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc.Init.DMAContinuousRequests = DISABLE;
+  hadc.Init.DMAContinuousRequests = ENABLE;
   hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   if (HAL_ADC_Init(&hadc) != HAL_OK)
   {
@@ -184,9 +255,17 @@ static void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
-  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel to be converted.
+  */
+  sConfig.Channel = ADC_CHANNEL_2;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -232,11 +311,11 @@ static void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -250,6 +329,22 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
 }
 
