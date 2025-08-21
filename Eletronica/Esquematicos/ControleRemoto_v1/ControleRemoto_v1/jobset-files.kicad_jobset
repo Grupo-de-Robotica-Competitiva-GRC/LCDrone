@@ -1,0 +1,42 @@
+{
+  "jobs": [
+    {
+      "description": "",
+      "id": "b5c871d8-d98b-48f5-9082-b845535ee047",
+      "settings": {
+        "black_and_white": false,
+        "color_theme": "IRADO",
+        "description": "",
+        "drawing_sheet": "",
+        "format": "pdf",
+        "hpgl_page_size": "default",
+        "hpgl_pen_size": 1.016,
+        "hpgl_plot_origin": "A3",
+        "min_pen_width": 847,
+        "output_filename": "CotroleRemoto_v1_Schematic",
+        "page_size": "auto",
+        "pdf_hierarchical_links": true,
+        "pdf_metadata": true,
+        "pdf_property_popups": true,
+        "plot_all": true,
+        "plot_drawing_sheet": true,
+        "use_background_color": true
+      },
+      "type": "sch_export_plot_pdf"
+    }
+  ],
+  "meta": {
+    "version": 1
+  },
+  "outputs": [
+    {
+      "description": "Esquematico",
+      "id": "a1c71c45-e937-4e0f-a96b-1e4b7e3125c0",
+      "only": [],
+      "settings": {
+        "output_path": "C:\\Users\\Nexus\\OneDrive\\Área de Trabalho\\LCDrone\\Eletronica\\Esquematicos\\ControleRemoto_v1\\"
+      },
+      "type": "folder"
+    }
+  ]
+}
