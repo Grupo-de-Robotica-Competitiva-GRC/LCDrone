@@ -141,7 +141,9 @@ int main(void)
 	    roll_kalman  = Kalman_Update(&KF_roll,  roll_acc,  gx_dps, dt);
 	    pitch_kalman = Kalman_Update(&KF_pitch, pitch_acc, gy_dps, dt);
 
-	    // (Opcional) use roll_kalman / pitch_kalman aqui (telemetria, controle, etc.)
+	    // use roll_kalman / pitch_kalman aqui
+        (PID, controle.)
+
 	    // HAL_Delay(1); // se precisar aliviar CPU
 
     /* USER CODE BEGIN 3 */
