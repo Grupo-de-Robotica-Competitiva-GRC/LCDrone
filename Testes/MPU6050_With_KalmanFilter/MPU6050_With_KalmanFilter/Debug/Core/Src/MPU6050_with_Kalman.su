@@ -1,0 +1,7 @@
+../Core/Src/MPU6050_with_Kalman.c:21:6:MPU6050_Init	40	static
+../Core/Src/MPU6050_with_Kalman.c:37:6:Kalman_Init	24	static
+../Core/Src/MPU6050_with_Kalman.c:47:7:Kalman_Update	88	static
+../Core/Src/MPU6050_with_Kalman.c:85:6:MPU6050_ReadRaw	24	static
+../Core/Src/MPU6050_with_Kalman.c:99:6:Convert_To_Physical	8	static
+../Core/Src/MPU6050_with_Kalman.c:111:6:Gyro_Calibrate	56	static
+../Core/Src/MPU6050_with_Kalman.c:127:6:Compute_Accel_Angles	32	static
