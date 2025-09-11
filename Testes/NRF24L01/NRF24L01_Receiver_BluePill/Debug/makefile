@@ -52,6 +52,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 Receptor_ControleRemoto_PWM.list \
 
+OBJCOPY_HEX += \
+Receptor_ControleRemoto_PWM.hex \
+
+OBJCOPY_BIN += \
+Receptor_ControleRemoto_PWM.bin \
+
 
 # All Target
 all: main-build
@@ -60,8 +66,8 @@ all: main-build
 main-build: Receptor_ControleRemoto_PWM.elf secondary-outputs
 
 # Tool invocations
-Receptor_ControleRemoto_PWM.elf Receptor_ControleRemoto_PWM.map: $(OBJS) $(USER_OBJS) C:\Users\Nexus\STM32CubeIDE\workspace_1.19.0\Receptor_ControleRemoto_PWM\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Receptor_ControleRemoto_PWM.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Nexus\STM32CubeIDE\workspace_1.19.0\Receptor_ControleRemoto_PWM\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Receptor_ControleRemoto_PWM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Receptor_ControleRemoto_PWM.elf Receptor_ControleRemoto_PWM.map: $(OBJS) $(USER_OBJS) C:\Users\Nexus\git\LCDrone\Testes\NRF24L01\NRF24L01_Receiver_Bluepill\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Receptor_ControleRemoto_PWM.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\Nexus\git\LCDrone\Testes\NRF24L01\NRF24L01_Receiver_Bluepill\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Receptor_ControleRemoto_PWM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -75,12 +81,22 @@ Receptor_ControleRemoto_PWM.list: $(EXECUTABLES) makefile objects.list $(OPTIONA
 	@echo 'Finished building: $@'
 	@echo ' '
 
+Receptor_ControleRemoto_PWM.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "Receptor_ControleRemoto_PWM.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+Receptor_ControleRemoto_PWM.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Receptor_ControleRemoto_PWM.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) Receptor_ControleRemoto_PWM.elf Receptor_ControleRemoto_PWM.list Receptor_ControleRemoto_PWM.map default.size.stdout
+	-$(RM) Receptor_ControleRemoto_PWM.bin Receptor_ControleRemoto_PWM.elf Receptor_ControleRemoto_PWM.hex Receptor_ControleRemoto_PWM.list Receptor_ControleRemoto_PWM.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
