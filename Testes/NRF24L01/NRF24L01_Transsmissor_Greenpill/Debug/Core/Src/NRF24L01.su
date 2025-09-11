@@ -1,0 +1,9 @@
+../Core/Src/NRF24L01.c:38:16:NRF24_SPI_RW	40	static
+../Core/Src/NRF24L01.c:44:13:NRF24_WriteReg	16	static
+../Core/Src/NRF24L01.c:51:16:NRF24_ReadReg	32	static
+../Core/Src/NRF24L01.c:60:13:NRF24_WriteAddr	40	static
+../Core/Src/NRF24L01.c:68:6:NRF24_Init_TX	32	static
+../Core/Src/NRF24L01.c:86:6:NRF24_Init_RX	24	static
+../Core/Src/NRF24L01.c:105:9:NRF24_Send	40	static
+../Core/Src/NRF24L01.c:132:9:NRF24_Receive	40	static
+../Core/Src/NRF24L01.c:148:6:NRF24_DebugLED	24	static
