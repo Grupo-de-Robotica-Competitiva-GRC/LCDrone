@@ -60,8 +60,8 @@ all: main-build
 main-build: Controle_Remoto_GreenPill.elf secondary-outputs
 
 # Tool invocations
-Controle_Remoto_GreenPill.elf Controle_Remoto_GreenPill.map: $(OBJS) $(USER_OBJS) C:\Users\Nexus\STM32CubeIDE\workspace_1.19.0\Controle_Remoto_GreenPill\STM32F070F6PX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Controle_Remoto_GreenPill.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\Nexus\STM32CubeIDE\workspace_1.19.0\Controle_Remoto_GreenPill\STM32F070F6PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Controle_Remoto_GreenPill.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Controle_Remoto_GreenPill.elf Controle_Remoto_GreenPill.map: $(OBJS) $(USER_OBJS) /home/laio/STM32CubeIDE/workspace_1.19.0/LCDrone/Testes/NRF24L01/NRF24L01_Transsmissor_Greenpill/STM32F070F6PX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Controle_Remoto_GreenPill.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"/home/laio/STM32CubeIDE/workspace_1.19.0/LCDrone/Testes/NRF24L01/NRF24L01_Transsmissor_Greenpill/STM32F070F6PX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Controle_Remoto_GreenPill.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

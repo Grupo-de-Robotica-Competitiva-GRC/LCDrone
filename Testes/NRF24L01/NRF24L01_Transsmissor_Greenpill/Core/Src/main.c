@@ -31,16 +31,16 @@
 
 NRF24_HandleTypeDef nrf;
 
-typedef struct {
-    uint16_t joy1_x;
-    uint16_t joy1_y;
-    uint16_t joy2_x;
-    uint16_t joy2_y;
-} JoystickData_t;
-
-JoystickData_t joystickData;  // Struct com os dados atuais
-
-uint32_t test_pot;  // valor do potenciômetro
+//typedef struct {
+//    uint16_t joy1_x;
+//    uint16_t joy1_y;
+//    uint16_t joy2_x;
+//    uint16_t joy2_y;
+//} JoystickData_t;
+//
+//JoystickData_t joystickData;  // Struct com os dados atuais
+//
+//uint32_t test_pot;  // valor do potenciômetro
 
 /* USER CODE END PTD */
 
@@ -76,6 +76,8 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+  uint8_t miau = -1;
+  uint8_t ok = -1;
 
 /* USER CODE END 0 */
 
@@ -149,19 +151,30 @@ int main(void)
 	  	          HAL_Delay(1000);
 
 	  */
-	  HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
-	  test_pot = HAL_ADC_GetValue(&hadc);
-	  HAL_Delay(10);
+//	  HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
+//	  test_pot = HAL_ADC_GetValue(&hadc);
+//	  HAL_Delay(10);
 
 
-	  uint8_t buffer[32] = {0};
-	  buffer[0] = test_pot & 0xFF;
-	  buffer[1] = (test_pot >> 8) & 0xFF;
-
-	  uint8_t ok = NRF24_Send(&nrf, (uint8_t*)buffer, 32);
-				   NRF24_DebugLED(LED_GPIO_Port, LED_Pin, ok);
-				   HAL_Delay(1000);
-
+//	  uint8_t buffer[32] = {0};
+//	  buffer[0] = test_pot & 0xFF;
+//	  buffer[1] = (test_pot >> 8) & 0xFF;
+//
+//	  uint8_t ok = NRF24_Send(&nrf, (uint8_t*)buffer, 32);
+//				   //NRF24_DebugLED(LED_GPIO_Port, LED_Pin, ok);
+//				   HAL_Delay(1000);
+	  if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+	  {
+		  miau = GPIO_PIN_SET;
+		  ok = NRF24_Send(&nrf, &miau, 8);
+		  HAL_Delay(1000);
+	  }
+	  else
+	  {
+		  miau = GPIO_PIN_RESET;
+		  ok = NRF24_Send(&nrf, &miau, 8);
+		  HAL_Delay(1000);
+	  }
 
   }
   /* USER CODE END 3 */
@@ -301,7 +314,7 @@ static void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_4BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
