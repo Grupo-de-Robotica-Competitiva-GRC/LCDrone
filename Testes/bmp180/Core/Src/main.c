@@ -62,6 +62,7 @@ float Pressao;
 float Altitude;
 float Altura;
 float Altura_inicial;
+int inicial = 0;
 
 
 /* USER CODE END 0 */
@@ -100,7 +101,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   BMP180_Start(); //Calibração
 
-  Altura_inicial = BMP180_GetAlt(0); //Salva a altitude inicial quando o drone é ligado
+   //Salva a altitude inicial quando o drone é ligado
 
   /* USER CODE END 2 */
 
@@ -111,12 +112,21 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(inicial == 0){
+		  Temperatura = BMP180_GetTemp();
+		  Pressao = BMP180_GetPress(1);
+		  Altitude = BMP180_GetAlt(1);
+		  Altura_inicial = Altitude;
+		  inicial = 1;
+	  }
+	  else{
 	  Temperatura = BMP180_GetTemp();
-	  Pressao = BMP180_GetPress(0);
-	  Altitude = BMP180_GetAlt(0);
+	  Pressao = BMP180_GetPress(1);
+	  Altitude = BMP180_GetAlt(1);
 	  Altura = Altitude - Altura_inicial;
+	  }
 
-	  HAL_Delay(1000);
+	  HAL_Delay(2000);
   }
   /* USER CODE END 3 */
 }
@@ -203,6 +213,8 @@ static void MX_GPIO_Init(void)
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
